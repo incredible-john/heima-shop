@@ -40,7 +40,13 @@ onLoad(() => {
 const isTriggered = ref(false)
 const onRefresherrefresh = async () => {
   isTriggered.value = true
-  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHotPanelData()])
+  guessRef.value?.resetData()
+  await Promise.all([
+    getHomeBannerData(),
+    getHomeCategoryData(),
+    getHotPanelData(),
+    guessRef.value?.getMore(),
+  ])
   isTriggered.value = false
 }
 </script>
