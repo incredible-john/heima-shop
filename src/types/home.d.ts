@@ -22,3 +22,13 @@ export type HotPanelItem = {
   title: string
   type: string
 }
+
+export type GuessLikeItem = {
+  desc: string
+  discount: number
+  id: string
+  name: string
+  orderNum: number
+  picture: string
+  price: number
+}

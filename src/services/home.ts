@@ -1,4 +1,5 @@
-import type { BannerItem, CategoryItem, HotPanelItem } from '@/types/home'
+import type { PageResult } from '@/types/global'
+import type { BannerItem, CategoryItem, GuessLikeItem, HotPanelItem } from '@/types/home'
 import { http } from '@/utils/http'
 
 /**
@@ -33,5 +34,15 @@ export const getHomeHotPanelAPI = () => {
   return http<HotPanelItem[]>({
     method: 'GET',
     url: '/home/hot/mutli',
+  })
+}
+
+/**
+ * 首页-猜你喜欢-小程序
+ */
+export const getGuesslikeAPI = () => {
+  return http<PageResult<GuessLikeItem>>({
+    method: 'GET',
+    url: '/home/goods/guessLike',
   })
 }
