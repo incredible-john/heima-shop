@@ -7,3 +7,18 @@ export type BannerItem = {
   imgUrl: string
   type: number
 }
+
+export type CategoryItem = {
+  icon: string
+  id: string
+  name: string
+}
+
+export type HotPanelItem = {
+  alt: string
+  id: string
+  pictures: string[]
+  target: string
+  title: string
+  type: string
+}

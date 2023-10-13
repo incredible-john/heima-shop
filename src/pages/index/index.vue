@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { getHomeBannerAPI } from '@/services/home'
+import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotPanelAPI } from '@/services/home'
 import CustomerNavBar from './components/CunstomerNavBar.vue'
+import CategoryPanel from './components/CategoryPanel.vue'
+import HotPanel from './components/HotPanel.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
-import type { BannerItem } from '@/types/home'
+import type { BannerItem, CategoryItem, HotPanelItem } from '@/types/home'
 
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -11,17 +13,35 @@ const getHomeBannerData = async () => {
   bannerList.value = res.result
 }
 
+const categoryList = ref<CategoryItem[]>([])
+const getHomeCategoryData = async () => {
+  const res = await getHomeCategoryAPI()
+  categoryList.value = res.result
+}
+
+const hotPanelList = ref<HotPanelItem[]>([])
+const getHotPanelData = async () => {
+  const res = await getHomeHotPanelAPI()
+  hotPanelList.value = res.result
+}
+
 onLoad(() => {
   getHomeBannerData()
+  getHomeCategoryData()
+  getHotPanelData()
 })
 </script>
 
 <template>
   <CustomerNavBar />
   <XtxSwiper :list="bannerList" />
+  <CategoryPanel :list="categoryList" />
+  <HotPanel :list="hotPanelList" />
   <view class="index">index</view>
 </template>
 
 <style lang="scss">
-//
+page {
+  background-color: #f7f7f7;
+}
 </style>

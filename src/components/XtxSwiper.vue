@@ -5,7 +5,7 @@ import { ref } from 'vue'
 const activeIndex = ref(0)
 
 const onChange: UniHelper.SwiperOnChange = (ev) => {
-  console.log(ev.detail.current)
+  // console.log(ev.detail.current)
   activeIndex.value = ev.detail.current
 }
 
