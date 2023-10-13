@@ -20,3 +20,9 @@ export type PageResult<T> = {
    */
   pageSize: number
 }
+
+/**通用分页参数类型 */
+export type PageParams = {
+  page?: number
+  pageSize?: number
+}
