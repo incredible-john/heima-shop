@@ -71,7 +71,6 @@ const httpInterceptor = {
     if (token) {
       options.header.Authorization = token
     }
-    console.log(options)
   },
 }
 
