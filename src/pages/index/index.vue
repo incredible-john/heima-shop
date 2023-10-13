@@ -7,6 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { BannerItem, CategoryItem, HotPanelItem } from '@/types/home'
 import type { XtxGuessInstance } from '@/types/component'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -31,10 +32,12 @@ const onScrolltolower = () => {
   guessRef.value?.getMore()
   console.log('滚动触底！')
 }
-onLoad(() => {
-  getHomeBannerData()
-  getHomeCategoryData()
-  getHotPanelData()
+
+const isLoading = ref(false)
+onLoad(async () => {
+  isLoading.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHotPanelData()])
+  isLoading.value = false
 })
 
 const isTriggered = ref(false)
@@ -61,11 +64,14 @@ const onRefresherrefresh = async () => {
     class="scroll-view"
     scroll-y
   >
-    <XtxSwiper :list="bannerList" />
-    <CategoryPanel :list="categoryList" />
-    <HotPanel :list="hotPanelList" />
-    <XtxGuess ref="guessRef" />
-    <view class="index">index</view>
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
+      <XtxSwiper :list="bannerList" />
+      <CategoryPanel :list="categoryList" />
+      <HotPanel :list="hotPanelList" />
+      <XtxGuess ref="guessRef" />
+      <view class="index">index</view>
+    </template>
   </scroll-view>
 </template>
 
