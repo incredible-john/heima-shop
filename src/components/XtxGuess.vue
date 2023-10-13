@@ -12,6 +12,10 @@ const getGuesslikeData = async () => {
 onMounted(() => {
   getGuesslikeData()
 })
+
+defineExpose({
+  getMore: getGuesslikeData,
+})
 </script>
 
 <template>
