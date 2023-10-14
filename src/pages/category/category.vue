@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { getHomeBannerAPI } from '@/services/home'
 import type { BannerItem } from '@/types/home'
+import type { CategoryTopItem } from '@/types/category'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import { getCategoryTopAPI } from '@/services/category'
 
 const bannerList = ref<BannerItem[]>([])
 const getBannerData = async () => {
@@ -10,8 +12,15 @@ const getBannerData = async () => {
   bannerList.value = res.result
 }
 
+const categoryList = ref<CategoryTopItem[]>([])
+const getCategoryTopData = async () => {
+  const res = await getCategoryTopAPI()
+  categoryList.value = res.result
+}
+const activeIndex = ref(0)
 onLoad(() => {
   getBannerData()
+  getCategoryTopData()
 })
 </script>
 
@@ -27,8 +36,14 @@ onLoad(() => {
     <view class="categories">
       <!-- 左侧：一级分类 -->
       <scroll-view class="primary" scroll-y>
-        <view v-for="(item, index) in 10" :key="item" class="item" :class="{ active: index === 0 }">
-          <text class="name"> 居家 </text>
+        <view
+          v-for="(item, index) in categoryList"
+          :key="item.id"
+          class="item"
+          :class="{ active: index === activeIndex }"
+          @tap="activeIndex = index"
+        >
+          <text class="name"> {{ item.name }} </text>
         </view>
       </scroll-view>
       <!-- 右侧：二级分类 -->
@@ -36,15 +51,15 @@ onLoad(() => {
         <!-- 焦点图 -->
         <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
-        <view class="panel" v-for="item in 3" :key="item">
+        <view class="panel" v-for="item in categoryList[activeIndex].children" :key="item.id">
           <view class="title">
-            <text class="name">宠物用品</text>
+            <text class="name"> {{ item.name }} </text>
             <navigator class="more" hover-class="none">全部</navigator>
           </view>
           <view class="section">
             <navigator
-              v-for="goods in 4"
-              :key="goods"
+              v-for="goods in item.goods"
+              :key="goods.id"
               class="goods"
               hover-class="none"
               :url="`/pages/goods/goods?id=`"
