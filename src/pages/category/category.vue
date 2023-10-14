@@ -3,8 +3,9 @@ import { getHomeBannerAPI } from '@/services/home'
 import type { BannerItem } from '@/types/home'
 import type { CategoryTopItem } from '@/types/category'
 import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { getCategoryTopAPI } from '@/services/category'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 const bannerList = ref<BannerItem[]>([])
 const getBannerData = async () => {
@@ -12,20 +13,25 @@ const getBannerData = async () => {
   bannerList.value = res.result
 }
 
+const activeIndex = ref(0)
 const categoryList = ref<CategoryTopItem[]>([])
+const categorySubList = computed(() => {
+  return categoryList.value[activeIndex.value]?.children || []
+})
 const getCategoryTopData = async () => {
   const res = await getCategoryTopAPI()
   categoryList.value = res.result
 }
-const activeIndex = ref(0)
-onLoad(() => {
-  getBannerData()
-  getCategoryTopData()
+
+const isLoaded = ref(false)
+onLoad(async () => {
+  await Promise.all([getBannerData(), getCategoryTopData()])
+  isLoaded.value = true
 })
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="isLoaded">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
@@ -51,7 +57,7 @@ onLoad(() => {
         <!-- 焦点图 -->
         <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
-        <view class="panel" v-for="item in categoryList[activeIndex].children" :key="item.id">
+        <view class="panel" v-for="item in categorySubList" :key="item.id">
           <view class="title">
             <text class="name"> {{ item.name }} </text>
             <navigator class="more" hover-class="none">全部</navigator>
@@ -76,6 +82,7 @@ onLoad(() => {
       </scroll-view>
     </view>
   </view>
+  <PageSkeleton v-else />
 </template>
 
 <style lang="scss">
