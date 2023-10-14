@@ -21,15 +21,26 @@ uni.setNavigationBarTitle({ title: curUrlMap!.title })
 
 const activeIndex = ref(0)
 const bannerPicture = ref('')
-const subTypes = ref<SubTypeItem[]>([])
+const subTypes = ref<(SubTypeItem & { isFinished?: boolean })[]>([])
 const getHotRecommendData = async () => {
-  const res = await getHotRecommendAPI(curUrlMap!.url)
+  const res = await getHotRecommendAPI(curUrlMap!.url, {
+    page: import.meta.env.DEV ? 30 : 1,
+  })
   bannerPicture.value = res.result.bannerPicture
   subTypes.value = res.result.subTypes
 }
+
 const onScrolltolower = async () => {
   const curSubTypes = subTypes.value[activeIndex.value]
-  curSubTypes.goodsItems.page++
+  if (curSubTypes.goodsItems.page < curSubTypes.goodsItems.pages) {
+    curSubTypes.goodsItems.page++
+  } else {
+    curSubTypes.isFinished = true
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
   const res = await getHotRecommendAPI(curUrlMap!.url, {
     subType: curSubTypes.id,
     page: curSubTypes.goodsItems.page,
@@ -86,7 +97,7 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ item.isFinished ? '没有更多数据了' : '加载中……' }}</view>
     </scroll-view>
   </view>
 </template>
