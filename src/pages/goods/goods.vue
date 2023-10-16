@@ -31,6 +31,11 @@ const onTapImage = (url: string) => {
     urls: goods.value!.mainPictures,
   })
 }
+
+const popup = ref<{
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
 </script>
 
 <template>
@@ -55,7 +60,7 @@ const onTapImage = (url: string) => {
       <view class="meta">
         <view class="price">
           <text class="symbol">¥</text>
-          <text class="number">29.90</text>
+          <text class="number">{{ goods?.price }}</text>
         </view>
         <view class="name ellipsis">{{ goods?.name }}</view>
         <view class="desc"> {{ goods?.desc }} </view>
@@ -71,7 +76,7 @@ const onTapImage = (url: string) => {
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
-        <view class="item arrow">
+        <view @tap="popup?.open()" class="item arrow">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮 </text>
         </view>
@@ -118,6 +123,13 @@ const onTapImage = (url: string) => {
         </navigator>
       </view>
     </view>
+
+    <!-- 弹出层 -->
+    <uni-popup ref="popup" type="bottom" background-color="#fff">
+      <view>neiroong</view>
+      <view>neiroong</view>
+      <button @tap="popup?.close()">close button</button>
+    </uni-popup>
   </scroll-view>
 
   <!-- 用户操作 -->
