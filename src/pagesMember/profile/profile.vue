@@ -1,6 +1,20 @@
 <script setup lang="ts">
+import { getMemberProfileAPI } from '@/services/profile'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import type { ProfileDetail } from '@/types/member'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
+
+const memberProfile = ref<ProfileDetail>()
+const getMemberProfileData = async () => {
+  const res = await getMemberProfileAPI()
+  memberProfile.value = res.result
+}
+
+onLoad(() => {
+  getMemberProfileData()
+})
 </script>
 
 <template>
@@ -13,7 +27,7 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
     <!-- 头像 -->
     <view class="avatar">
       <view class="avatar-content">
-        <image class="image" src=" " mode="aspectFill" />
+        <image class="image" :src="memberProfile?.avatar" mode="aspectFill" />
         <text class="text">点击修改头像</text>
       </view>
     </view>
@@ -23,21 +37,26 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
       <view class="form-content">
         <view class="form-item">
           <text class="label">账号</text>
-          <text class="account">账号名</text>
+          <text class="account">{{ memberProfile?.account }}</text>
         </view>
         <view class="form-item">
           <text class="label">昵称</text>
-          <input class="input" type="text" placeholder="请填写昵称" value="" />
+          <input
+            class="input"
+            type="text"
+            placeholder="请输入昵称"
+            :value="memberProfile?.nickname"
+          />
         </view>
         <view class="form-item">
           <text class="label">性别</text>
           <radio-group>
             <label class="radio">
-              <radio value="男" color="#27ba9b" :checked="true" />
+              <radio value="男" color="#27ba9b" :checked="memberProfile?.gender === '男'" />
               男
             </label>
             <label class="radio">
-              <radio value="女" color="#27ba9b" :checked="false" />
+              <radio value="女" color="#27ba9b" :checked="memberProfile?.gender === '女'" />
               女
             </label>
           </radio-group>
@@ -49,22 +68,27 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
             mode="date"
             start="1900-01-01"
             :end="new Date()"
-            value="2000-01-01"
+            :value="memberProfile?.birthday"
           >
-            <view v-if="false">2000-01-01</view>
+            <view v-if="memberProfile?.birthday">{{ memberProfile.birthday }}</view>
             <view class="placeholder" v-else>请选择日期</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="['广东省', '广州市', '天河区']">
-            <view v-if="false">广东省广州市天河区</view>
+          <picker class="picker" mode="region" :value="memberProfile?.fullLocation?.split(' ')">
+            <view v-if="memberProfile?.fullLocation">{{ memberProfile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">职业</text>
-          <input class="input" type="text" placeholder="请填写职业" value="" />
+          <input
+            class="input"
+            type="text"
+            placeholder="请填写职业"
+            :value="memberProfile?.profession"
+          />
         </view>
       </view>
       <!-- 提交按钮 -->
