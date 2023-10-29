@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { getMemberProfileAPI } from '@/services/profile'
+import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/member'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
-const memberProfile = ref<ProfileDetail>()
+// 获取个人信息，修改个人信息需提供初始值
+const memberProfile = ref<ProfileDetail>({} as ProfileDetail)
 const getMemberProfileData = async () => {
   const res = await getMemberProfileAPI()
   memberProfile.value = res.result
@@ -43,6 +44,13 @@ const onAvatarChange = () => {
 onLoad(() => {
   getMemberProfileData()
 })
+
+const onSubmit = async () => {
+  const res = await putMemberProfileAPI({
+    nickname: memberProfile.value?.nickname,
+  })
+  uni.showToast({ icon: 'success', title: '保存成功' })
+}
 </script>
 
 <template>
@@ -73,7 +81,7 @@ onLoad(() => {
             class="input"
             type="text"
             placeholder="请输入昵称"
-            :value="memberProfile?.nickname"
+            v-model="memberProfile!.nickname"
           />
         </view>
         <view class="form-item">
@@ -120,7 +128,7 @@ onLoad(() => {
         </view>
       </view>
       <!-- 提交按钮 -->
-      <button class="form-button">保 存</button>
+      <button @tap="onSubmit" class="form-button">保 存</button>
     </view>
   </view>
 </template>
