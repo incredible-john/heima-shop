@@ -47,8 +47,23 @@ const onAvatarChange = () => {
   })
 }
 
+// 修改性别
 const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
   memberProfile.value.gender = ev.detail.value as Gender
+}
+
+// 修改生日
+const onBirthdayChange: UniHelper.DatePickerOnChange = (ev) => {
+  memberProfile.value.birthday = ev.detail.value
+}
+
+// 修改城市
+let fullLocationCode: [string, string, string] = ['', '', '']
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
+  // 前端更新
+  memberProfile.value.fullLocation = ev.detail.value.join(' ')
+  // 后端更新
+  fullLocationCode = ev.detail.code!
 }
 
 onLoad(() => {
@@ -56,9 +71,14 @@ onLoad(() => {
 })
 
 const onSubmit = async () => {
+  const { nickname, gender, birthday } = memberProfile.value
   const res = await putMemberProfileAPI({
-    nickname: memberProfile.value?.nickname,
-    gender: memberProfile.value.gender,
+    nickname,
+    gender,
+    birthday,
+    provinceCode: fullLocationCode[0],
+    cityCode: fullLocationCode[1],
+    countyCode: fullLocationCode[2],
   })
   // 更新Store昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -116,6 +136,7 @@ const onSubmit = async () => {
         <view class="form-item">
           <text class="label">生日</text>
           <picker
+            @change="onBirthdayChange"
             class="picker"
             mode="date"
             start="1900-01-01"
@@ -128,7 +149,12 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="memberProfile?.fullLocation?.split(' ')">
+          <picker
+            @change="onFullLocationChange"
+            class="picker"
+            mode="region"
+            :value="memberProfile?.fullLocation?.split(' ')"
+          >
             <view v-if="memberProfile?.fullLocation">{{ memberProfile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
