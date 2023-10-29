@@ -4,6 +4,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import type { ProfileDetail } from '@/types/member'
 import { useMemberStore } from '@/stores'
+import type { Gender } from '@/types/member'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -46,6 +47,10 @@ const onAvatarChange = () => {
   })
 }
 
+const onGenderChange: UniHelper.RadioGroupOnChange = (ev) => {
+  memberProfile.value.gender = ev.detail.value as Gender
+}
+
 onLoad(() => {
   getMemberProfileData()
 })
@@ -53,6 +58,7 @@ onLoad(() => {
 const onSubmit = async () => {
   const res = await putMemberProfileAPI({
     nickname: memberProfile.value?.nickname,
+    gender: memberProfile.value.gender,
   })
   // 更新Store昵称
   memberStore.profile!.nickname = res.result.nickname
@@ -96,7 +102,7 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <radio-group>
+          <radio-group @change="onGenderChange">
             <label class="radio">
               <radio value="男" color="#27ba9b" :checked="memberProfile?.gender === '男'" />
               男
