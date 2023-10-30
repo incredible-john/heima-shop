@@ -72,13 +72,14 @@ onLoad(() => {
 
 const onSubmit = async () => {
   const { nickname, gender, birthday } = memberProfile.value
+  const [provinceCode, cityCode, countyCode] = fullLocationCode
   const res = await putMemberProfileAPI({
     nickname,
     gender,
     birthday,
-    provinceCode: fullLocationCode[0],
-    cityCode: fullLocationCode[1],
-    countyCode: fullLocationCode[2],
+    provinceCode,
+    cityCode,
+    countyCode,
   })
   // 更新Store昵称
   memberStore.profile!.nickname = res.result.nickname
