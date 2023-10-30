@@ -58,7 +58,7 @@ const rules = {
   contact: {
     rules: [
       { required: true, errorMessage: '请输入联系方式' },
-      { pattern: /^1[3-9]\d{9}/, errorMessage: '手机号格式不正确' },
+      { pattern: /^1[3-9]\d{9}$/, errorMessage: '手机号格式不正确' },
     ],
   },
   fullLocation: {
