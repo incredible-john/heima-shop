@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // import { uni } from '@dcloudio/uni-h5'
-import { postMemberAddressAPI } from '@/services/address'
+import { getMemberAddressByIdAPI, postMemberAddressAPI } from '@/services/address'
+import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
 // 表单数据
@@ -18,6 +19,20 @@ const form = ref({
 const query = defineProps<{
   id?: string
 }>()
+
+// 获取收获地址详情数据
+const getMemberAddressByIdData = async () => {
+  if (query.id) {
+    // 发送请求
+    const res = await getMemberAddressByIdAPI(query.id)
+    // 合并到表单中
+    Object.assign(form.value, res.result)
+  }
+}
+
+onLoad(() => {
+  getMemberAddressByIdData()
+})
 
 const onRegionChange: UniHelper.RegionPickerOnChange = (ev) => {
   // 前端更新
