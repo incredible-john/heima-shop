@@ -11,6 +11,7 @@ import {
 } from '@/services/cart'
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
 import { compileToFunction } from 'vue'
+import { useGuessList } from '@/composables'
 
 const memberStore = useMemberStore()
 
@@ -88,6 +89,10 @@ const goToPayment = () => {
     title: '等待完成',
   })
 }
+
+const { guessRef, onScrolltolower } = useGuessList() /* 实现<猜你喜欢>分页加载 */
+const { safeAreaInsets } = uni.getSystemInfoSync() /* 底部工具栏安全区适配 */
+
 onShow(() => {
   if (memberStore.profile) {
     getMemberCartData()
@@ -96,7 +101,7 @@ onShow(() => {
 </script>
 
 <template>
-  <scroll-view scroll-y class="scroll-view">
+  <scroll-view @scrolltolower="onScrolltolower" scroll-y class="scroll-view">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
@@ -161,7 +166,7 @@ onShow(() => {
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <view class="toolbar" :style="{ paddingBottom: safeAreaInsets!.bottom + 'px' }">
         <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCartListMoney }}</text>

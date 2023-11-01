@@ -21,7 +21,7 @@ const { guessRef, onScrolltolower } = useGuessList()
 <template>
   <scroll-view @scrolltolower="onScrolltolower" class="viewport" scroll-y enable-back-to-top>
     <!-- 个人资料 -->
-    <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
+    <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' } ">
       <!-- 情况1：已登录 -->
       <view class="overview" v-if="memberStore.profile">
         <navigator url="/pagesMember/profile/profile" hover-class="none">
