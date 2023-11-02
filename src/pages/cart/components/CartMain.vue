@@ -85,9 +85,7 @@ const goToPayment = () => {
     })
   }
   // 跳转结算页
-  uni.showToast({
-    title: '等待完成',
-  })
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 
 const { guessRef, onScrolltolower } = useGuessList() /* 实现<猜你喜欢>分页加载 */
